@@ -1,0 +1,517 @@
+{
+    "name": "Open CO 40BB",
+    "labels": {
+        "open": "#ff0000",
+        "fold 100%": "#80ffff",
+        "bottom d'open": "#ff00ff"
+    },
+    "range_data": {
+        "AA": [
+            "open"
+        ],
+        "AKs": [
+            "open"
+        ],
+        "AQs": [
+            "open"
+        ],
+        "AJs": [
+            "open"
+        ],
+        "KK": [
+            "open"
+        ],
+        "AKo": [
+            "open"
+        ],
+        "KQs": [
+            "open"
+        ],
+        "KJs": [
+            "open"
+        ],
+        "ATs": [
+            "open"
+        ],
+        "KTs": [
+            "open"
+        ],
+        "A9s": [
+            "open"
+        ],
+        "A7s": [
+            "open"
+        ],
+        "A6s": [
+            "open"
+        ],
+        "A5s": [
+            "open"
+        ],
+        "A4s": [
+            "open"
+        ],
+        "A3s": [
+            "open"
+        ],
+        "A2s": [
+            "bottom d'open"
+        ],
+        "A8s": [
+            "open"
+        ],
+        "AQo": [
+            "open"
+        ],
+        "AJo": [
+            "open"
+        ],
+        "ATo": [
+            "open"
+        ],
+        "A9o": [
+            "open"
+        ],
+        "KQo": [
+            "open"
+        ],
+        "QQ": [
+            "open"
+        ],
+        "KJo": [
+            "open"
+        ],
+        "QJo": [
+            "open"
+        ],
+        "QJs": [
+            "open"
+        ],
+        "JTo": [
+            "open"
+        ],
+        "KTo": [
+            "open"
+        ],
+        "QTo": [
+            "open"
+        ],
+        "TT": [
+            "open"
+        ],
+        "JTs": [
+            "open"
+        ],
+        "JJ": [
+            "open"
+        ],
+        "Q9s": [
+            "open"
+        ],
+        "QTs": [
+            "open"
+        ],
+        "K9s": [
+            "open"
+        ],
+        "K7s": [
+            "open"
+        ],
+        "K6s": [
+            "open"
+        ],
+        "K5s": [
+            "open"
+        ],
+        "K4s": [
+            "open"
+        ],
+        "K3s": [
+            "open"
+        ],
+        "K8s": [
+            "open"
+        ],
+        "Q8s": [
+            "open"
+        ],
+        "J9s": [
+            "open"
+        ],
+        "J8s": [
+            "open"
+        ],
+        "T9s": [
+            "open"
+        ],
+        "T8s": [
+            "open"
+        ],
+        "97s": [
+            "open"
+        ],
+        "98s": [
+            "open"
+        ],
+        "99": [
+            "open"
+        ],
+        "88": [
+            "open"
+        ],
+        "77": [
+            "open"
+        ],
+        "65s": [
+            "open"
+        ],
+        "66": [
+            "open"
+        ],
+        "55": [
+            "open"
+        ],
+        "44": [
+            "open"
+        ],
+        "33": [
+            "open"
+        ],
+        "22": [
+            "bottom d'open"
+        ],
+        "76s": [
+            "open"
+        ],
+        "87s": [
+            "open"
+        ],
+        "K2s": [
+            "bottom d'open"
+        ],
+        "Q2s": [
+            "fold 100%"
+        ],
+        "Q3s": [
+            "fold 100%"
+        ],
+        "Q4s": [
+            "bottom d'open"
+        ],
+        "Q5s": [
+            "open"
+        ],
+        "Q6s": [
+            "open"
+        ],
+        "Q7s": [
+            "open"
+        ],
+        "J7s": [
+            "open"
+        ],
+        "J6s": [
+            "bottom d'open"
+        ],
+        "J4s": [
+            "fold 100%"
+        ],
+        "J3s": [
+            "fold 100%"
+        ],
+        "J2s": [
+            "fold 100%"
+        ],
+        "J5s": [
+            "fold 100%"
+        ],
+        "T7s": [
+            "open"
+        ],
+        "T6s": [
+            "bottom d'open"
+        ],
+        "T5s": [
+            "fold 100%"
+        ],
+        "T4s": [
+            "fold 100%"
+        ],
+        "T3s": [
+            "fold 100%"
+        ],
+        "T2s": [
+            "fold 100%"
+        ],
+        "92s": [
+            "fold 100%"
+        ],
+        "93s": [
+            "fold 100%"
+        ],
+        "94s": [
+            "fold 100%"
+        ],
+        "96s": [
+            "bottom d'open"
+        ],
+        "95s": [
+            "fold 100%"
+        ],
+        "86s": [
+            "bottom d'open"
+        ],
+        "85s": [
+            "fold 100%"
+        ],
+        "84s": [
+            "fold 100%"
+        ],
+        "83s": [
+            "fold 100%"
+        ],
+        "82s": [
+            "fold 100%"
+        ],
+        "72s": [
+            "fold 100%"
+        ],
+        "73s": [
+            "fold 100%"
+        ],
+        "75s": [
+            "bottom d'open"
+        ],
+        "74s": [
+            "fold 100%"
+        ],
+        "64s": [
+            "fold 100%"
+        ],
+        "63s": [
+            "fold 100%"
+        ],
+        "62s": [
+            "fold 100%"
+        ],
+        "52s": [
+            "fold 100%"
+        ],
+        "53s": [
+            "fold 100%"
+        ],
+        "54s": [
+            "bottom d'open"
+        ],
+        "43s": [
+            "fold 100%"
+        ],
+        "42s": [
+            "fold 100%"
+        ],
+        "32s": [
+            "fold 100%"
+        ],
+        "32o": [
+            "fold 100%"
+        ],
+        "42o": [
+            "fold 100%"
+        ],
+        "62o": [
+            "fold 100%"
+        ],
+        "52o": [
+            "fold 100%"
+        ],
+        "82o": [
+            "fold 100%"
+        ],
+        "T4o": [
+            "fold 100%"
+        ],
+        "T6o": [
+            "fold 100%"
+        ],
+        "Q6o": [
+            "fold 100%"
+        ],
+        "Q7o": [
+            "fold 100%"
+        ],
+        "K8o": [
+            "bottom d'open"
+        ],
+        "K9o": [
+            "open"
+        ],
+        "Q9o": [
+            "bottom d'open"
+        ],
+        "J9o": [
+            "bottom d'open"
+        ],
+        "T9o": [
+            "bottom d'open"
+        ],
+        "T8o": [
+            "fold 100%"
+        ],
+        "98o": [
+            "fold 100%"
+        ],
+        "87o": [
+            "fold 100%"
+        ],
+        "86o": [
+            "fold 100%"
+        ],
+        "75o": [
+            "fold 100%"
+        ],
+        "64o": [
+            "fold 100%"
+        ],
+        "54o": [
+            "fold 100%"
+        ],
+        "43o": [
+            "fold 100%"
+        ],
+        "53o": [
+            "fold 100%"
+        ],
+        "65o": [
+            "fold 100%"
+        ],
+        "63o": [
+            "fold 100%"
+        ],
+        "73o": [
+            "fold 100%"
+        ],
+        "74o": [
+            "fold 100%"
+        ],
+        "72o": [
+            "fold 100%"
+        ],
+        "84o": [
+            "fold 100%"
+        ],
+        "83o": [
+            "fold 100%"
+        ],
+        "76o": [
+            "fold 100%"
+        ],
+        "97o": [
+            "fold 100%"
+        ],
+        "96o": [
+            "fold 100%"
+        ],
+        "85o": [
+            "fold 100%"
+        ],
+        "95o": [
+            "fold 100%"
+        ],
+        "94o": [
+            "fold 100%"
+        ],
+        "93o": [
+            "fold 100%"
+        ],
+        "92o": [
+            "fold 100%"
+        ],
+        "T2o": [
+            "fold 100%"
+        ],
+        "T3o": [
+            "fold 100%"
+        ],
+        "J3o": [
+            "fold 100%"
+        ],
+        "J2o": [
+            "fold 100%"
+        ],
+        "Q2o": [
+            "fold 100%"
+        ],
+        "K2o": [
+            "fold 100%"
+        ],
+        "A2o": [
+            "fold 100%"
+        ],
+        "A3o": [
+            "fold 100%"
+        ],
+        "K3o": [
+            "fold 100%"
+        ],
+        "Q3o": [
+            "fold 100%"
+        ],
+        "Q4o": [
+            "fold 100%"
+        ],
+        "K4o": [
+            "fold 100%"
+        ],
+        "A4o": [
+            "fold 100%"
+        ],
+        "A5o": [
+            "bottom d'open"
+        ],
+        "A6o": [
+            "open"
+        ],
+        "A7o": [
+            "open"
+        ],
+        "A8o": [
+            "open"
+        ],
+        "K7o": [
+            "fold 100%"
+        ],
+        "Q8o": [
+            "fold 100%"
+        ],
+        "J8o": [
+            "fold 100%"
+        ],
+        "T7o": [
+            "fold 100%"
+        ],
+        "J7o": [
+            "fold 100%"
+        ],
+        "T5o": [
+            "fold 100%"
+        ],
+        "J5o": [
+            "fold 100%"
+        ],
+        "J4o": [
+            "fold 100%"
+        ],
+        "J6o": [
+            "fold 100%"
+        ],
+        "Q5o": [
+            "fold 100%"
+        ],
+        "K5o": [
+            "fold 100%"
+        ],
+        "K6o": [
+            "fold 100%"
+        ]
+    }
+}
