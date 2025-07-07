@@ -29,11 +29,11 @@ class TrainingTable:
 
         self.positions = POSITIONS.copy()
         self.range_files = {
-            "LJ": "open_LJ_40BB.json",
-            "HJ": "open_HJ_40BB.json",
-            "CO": "open_CO_40BB.json",
-            "BTN": "open_BTN_40BB.json",
-            "SB": "open_SB_40BB.json"
+            "LJ": "ranges/open_LJ_40BB.json",
+            "HJ": "ranges/open_HJ_40BB.json",
+            "CO": "ranges/open_CO_40BB.json",
+            "BTN": "ranges/open_BTN_40BB.json",
+            "SB": "ranges/open_SB_40BB.json"
         }
         self.current_data = {}
         self.current_hand = ""
