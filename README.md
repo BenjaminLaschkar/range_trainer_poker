@@ -16,6 +16,8 @@ Use create new range to create a new range from scratch with label
 # USE THE TRAINER
 ![image](https://github.com/user-attachments/assets/80218486-2720-43da-a0c8-eb8b29a4c569)
 Position will vary (for now you have in the trainer LJ / HJ / CO / BU / SB only for 40BB deep)
+When you train the choice you written in the label will appear and you have to select the right answer.
+There is a score and after 3 errors it reset.
 
 # USE THE TRAINER FOR YOUR OWN RANGE
 Currently you need to change a bit of code to add your own range to the trainer, it will come in further version.
@@ -31,8 +33,9 @@ Here is the worst possible range you can create <3
 
 
 # What need to be done in the futur
-* Customize the code to implement personnal range to the trainer
+* Customize the code to implement personnal range to the trainer (WIP)
 * Update the trainer to train to a specific range
 * Not everything is in english
 * A bit ugly right now, it could be more cool with some color or with something else than tkinter.
 * More things to improve in the code, lot of it was writted with chatgpt
+* Game is a bit lame, going to maximum with only 3 error possible ? Could be great to make new game or a leaderboard
