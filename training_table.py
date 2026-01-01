@@ -5,28 +5,140 @@ import json
 import os
 import random
 import re
+import time
 from PIL import Image, ImageTk
 
 POSITIONS = ["LJ", "HJ", "CO", "BTN", "SB", "BB"]
 
+# Couleurs du thème
+POKER_GREEN = "#0D5D37"
+POKER_DARK_GREEN = "#0A4028"
+GOLD = "#FFD700"
+TEXT_COLOR = "#FFFFFF"
+BUTTON_BG = "#1E5A3E"
+
 class TrainingTable:
     def __init__(self, root):
         self.root = tk.Toplevel(root)
-        self.root.title("S'entraîner au préflop")
-        self.score, self.errors = 0, 0
+        self.root.title("♠️ Entraînement Préflop ♠️")
+        self.root.configure(bg=POKER_GREEN)
+        self.root.geometry("900x700")
+        
+        # Statistiques
+        self.score = 0
+        self.errors = 0
+        self.streak = 0
+        self.best_streak = 0
+        self.total_questions = 0
+        self.start_time = time.time()
+        self.question_times = []
 
-        self.canvas = tk.Canvas(self.root, width=600, height=400, bg='darkgreen')
-        self.canvas.pack(pady=10)
+        # En-tête avec statistiques
+        header_frame = tk.Frame(self.root, bg=POKER_DARK_GREEN, relief=tk.RIDGE, bd=3)
+        header_frame.pack(fill=tk.X, pady=(0, 10))
 
-        self.feedback_label = tk.Label(self.root, text="", font=("Helvetica", 12))
-        self.feedback_label.pack()
+        title = tk.Label(
+            header_frame,
+            text="🎯 MODE ENTRAÎNEMENT PRÉFLOP 🎯",
+            font=("Arial Black", 18, "bold"),
+            bg=POKER_DARK_GREEN,
+            fg=GOLD
+        )
+        title.pack(pady=10)
 
-        self.score_label = tk.Label(self.root, text="Score: 0 | Erreurs: 0", font=("Helvetica", 12, "bold"))
-        self.score_label.pack()
+        # Frame des statistiques
+        stats_frame = tk.Frame(header_frame, bg=POKER_DARK_GREEN)
+        stats_frame.pack(pady=5)
 
-        self.button_frame = tk.Frame(self.root)
-        self.button_frame.pack(pady=10)
+        self.score_label = tk.Label(
+            stats_frame,
+            text="",
+            font=("Arial", 12, "bold"),
+            bg=POKER_DARK_GREEN,
+            fg=TEXT_COLOR
+        )
+        self.score_label.pack(side=tk.LEFT, padx=15)
 
+        self.streak_label = tk.Label(
+            stats_frame,
+            text="",
+            font=("Arial", 12, "bold"),
+            bg=POKER_DARK_GREEN,
+            fg=GOLD
+        )
+        self.streak_label.pack(side=tk.LEFT, padx=15)
+
+        self.accuracy_label = tk.Label(
+            stats_frame,
+            text="",
+            font=("Arial", 12, "bold"),
+            bg=POKER_DARK_GREEN,
+            fg="#4ECDC4"
+        )
+        self.accuracy_label.pack(side=tk.LEFT, padx=15)
+
+        # Canvas pour la table de poker
+        canvas_frame = tk.Frame(self.root, bg=POKER_GREEN, relief=tk.SUNKEN, bd=3)
+        canvas_frame.pack(pady=10)
+
+        self.canvas = tk.Canvas(
+            canvas_frame,
+            width=700,
+            height=450,
+            bg='#1a5c3f',
+            highlightthickness=0
+        )
+        self.canvas.pack(padx=5, pady=5)
+
+        # Zone de feedback
+        self.feedback_label = tk.Label(
+            self.root,
+            text="",
+            font=("Arial", 13, "bold"),
+            bg=POKER_GREEN,
+            height=2
+        )
+        self.feedback_label.pack(pady=5)
+
+        # Frame pour les boutons d'action
+        self.button_frame = tk.Frame(self.root, bg=POKER_GREEN)
+        self.button_frame.pack(pady=15)
+
+        # Boutons utilitaires
+        utils_frame = tk.Frame(self.root, bg=POKER_GREEN)
+        utils_frame.pack(pady=5)
+
+        tk.Button(
+            utils_frame,
+            text="📊 Voir Statistiques",
+            command=self.show_statistics,
+            bg=BUTTON_BG,
+            fg=TEXT_COLOR,
+            font=("Arial", 10, "bold"),
+            cursor="hand2"
+        ).pack(side=tk.LEFT, padx=5)
+
+        tk.Button(
+            utils_frame,
+            text="🔄 Réinitialiser",
+            command=self.reset_stats,
+            bg=BUTTON_BG,
+            fg=TEXT_COLOR,
+            font=("Arial", 10, "bold"),
+            cursor="hand2"
+        ).pack(side=tk.LEFT, padx=5)
+
+        tk.Button(
+            utils_frame,
+            text="❌ Fermer",
+            command=self.root.destroy,
+            bg=POKER_DARK_GREEN,
+            fg="#FF6B6B",
+            font=("Arial", 10, "bold"),
+            cursor="hand2"
+        ).pack(side=tk.LEFT, padx=5)
+
+        # Initialisation des données
         self.positions = POSITIONS.copy()
         self.range_files = {
             "LJ": "ranges/open_LJ_40BB.json",
@@ -35,181 +147,325 @@ class TrainingTable:
             "BTN": "ranges/open_BTN_40BB.json",
             "SB": "ranges/open_SB_40BB.json"
         }
+        
         self.current_data = {}
         self.current_hand = ""
         self.current_hand_image_str = ""
         self.current_position = ""
         self.current_bb = 0
+        self.card_images = []
+        
+        self.update_score_display()
         self.generate_new_hand()
 
     def draw_table(self):
+        """Dessine la table de poker avec positions et cartes"""
         self.canvas.delete("all")
-        self.canvas.create_oval(100, 50, 500, 350, outline="white", width=3)
-
+        
+        # Table elliptique
+        self.canvas.create_oval(
+            80, 80, 620, 370,
+            outline=GOLD,
+            width=4,
+            fill='#0a3d25'
+        )
+        
+        # Positions des joueurs sur la table
         pos_coords = {
-            "LJ": (170, 90),
-            "HJ": (300, 60),
-            "CO": (430, 90),
-            "BTN": (480, 200),
-            "SB": (180, 310),
-            "BB": (120, 200),
+            "LJ": (190, 130),
+            "HJ": (350, 90),
+            "CO": (510, 130),
+            "BTN": (580, 225),
+            "SB": (200, 330),
+            "BB": (130, 225),
         }
 
         pos_order = POSITIONS
         cur_idx = pos_order.index(self.current_position)
 
+        # Dessiner les positions
         for pos, (x, y) in pos_coords.items():
-            fill = "yellow" if pos == self.current_position else "white"
-            self.canvas.create_oval(x - 20, y - 20, x + 20, y + 20, fill=fill)
-            self.canvas.create_text(x, y, text=pos, font=("Helvetica", 10, "bold"))
-            if pos_order.index(pos) < cur_idx:
-                self.canvas.create_text(x, y + 25, text="Fold", fill="gray", font=("Helvetica", 8))
+            is_current = (pos == self.current_position)
+            has_folded = pos_order.index(pos) < cur_idx
+            
+            # Cercle de position
+            fill_color = GOLD if is_current else "#2d5f3f" if has_folded else "#4a7c59"
+            outline_color = "#FFD700" if is_current else "#666"
+            
+            self.canvas.create_oval(
+                x - 30, y - 30, x + 30, y + 30,
+                fill=fill_color,
+                outline=outline_color,
+                width=3 if is_current else 2
+            )
+            
+            # Texte de position
+            text_color = "black" if is_current else "white"
+            self.canvas.create_text(
+                x, y - 5,
+                text=pos,
+                font=("Arial Black", 12, "bold"),
+                fill=text_color
+            )
+            
+            # Indicateur de fold
+            if has_folded:
+                self.canvas.create_text(
+                    x, y + 10,
+                    text="FOLD",
+                    fill="#999",
+                    font=("Arial", 8, "bold")
+                )
 
-        # Affiche les infos textuelles
-        self.canvas.create_text(300, 180, text=f"Main: {self.current_hand}", fill="white", font=("Helvetica", 14, "bold"))
-        self.canvas.create_text(300, 210, text=f"Position: {self.current_position} | Stack: {self.current_bb}BB", fill="white", font=("Helvetica", 10, "italic"))
-
-        # === Affichage des cartes ===
+        # Affichage des cartes
         filenames = self.parse_hand_to_filenames(self.current_hand_image_str)
+        self.card_images = []
 
-        self.card_images = []  # très important pour ne pas que les images soient supprimées !
-
-        x_start = 260  # position de la première carte
+        offset_xy_from_position = {
+            "LJ": (160, 100),
+            "HJ": (320, 60),
+            "CO": (480, 100),
+            "BTN": (550, 195),
+            "SB": (170, 300),
+            "BB": (100, 195),
+        }
+        
+        offset_x, offset_y = offset_xy_from_position[self.current_position]
+        
         for i, filename in enumerate(filenames):
             path = os.path.join("cards_images", filename)
             try:
-                # Ouvre l’image avec PIL
                 pil_image = Image.open(path)
-                # Redimensionne (par exemple 60x90 pixels)
-                resized_image = pil_image.resize((50, 80), Image.Resampling.LANCZOS)
-                # Convertit en image Tkinter
+                resized_image = pil_image.resize((55, 85), Image.Resampling.LANCZOS)
                 tk_image = ImageTk.PhotoImage(resized_image)
-                # Stocke l’image pour ne pas qu’elle soit supprimée
                 self.card_images.append(tk_image)
-                # Affiche l’image
-                offset_xy_from_position = {
-                                        "LJ": (-60, -45),
-                                        "HJ": (-5, -45),
-                                        "CO": (130, -27),
-                                        "BTN": (150, 90),
-                                        "SB": (-50, 150),
-                                        "BB": (100, 100),
-                                }
-                offset_x, offset_y = offset_xy_from_position[self.current_position]
-                print(offset_x, offset_y)
-                print(self.current_position)
-                self.canvas.create_image(x_start + i * 52 + offset_x, 130 + offset_y, image=tk_image, anchor=tk.NW)
+                
+                # Rotation légère pour effet dynamique
+                self.canvas.create_image(
+                    offset_x + i * 58,
+                    offset_y,
+                    image=tk_image,
+                    anchor=tk.NW
+                )
             except Exception as e:
                 print(f"Erreur chargement image {path} : {e}")
 
+        # Panneau d'informations au centre
+        self.canvas.create_rectangle(
+            250, 200, 450, 250,
+            fill="#1a1a1a",
+            outline=GOLD,
+            width=2
+        )
+        
+        self.canvas.create_text(
+            350, 215,
+            text=f"Main: {self.current_hand}",
+            fill=GOLD,
+            font=("Arial Black", 14, "bold")
+        )
+        
+        self.canvas.create_text(
+            350, 235,
+            text=f"{self.current_position} - {self.current_bb}BB",
+            fill="white",
+            font=("Arial", 11, "italic")
+        )
+
     def generate_new_hand(self):
-        self.current_position = random.choice(POSITIONS[:-1])  # enlève la BB
+        """Génère une nouvelle main pour l'entraînement"""
+        self.current_position = random.choice(POSITIONS[:-1])  # Sans BB
         self.current_data, self.current_position, self.current_bb = self.load_range_for_position(self.current_position)
         self.range_data = self.current_data.get("range_data", {})
+        
+        if not self.range_data:
+            messagebox.showerror("Erreur", f"Aucune donnée trouvée pour {self.current_position}")
+            return
+            
         range_key = random.choice(list(self.range_data.keys()))
         self.current_hand = range_key
         self.current_hand_image_str = self.convert_range_hand_to_cards(range_key)
-        # Charger et afficher les cartes au centre
-        filenames = self.parse_hand_to_filenames(self.current_hand_image_str)
-        print(self.current_hand_image_str)
-
-        self.card_images = []  # stocker les références pour éviter la garbage collection
-
-        x_start = 260  # position de la 1re carte
-        for i, filename in enumerate(filenames):
-            path = os.path.join("cards_images", filename)
-            try:
-                image = tk.PhotoImage(file=path)
-                self.card_images.append(image)
-                self.canvas.create_image(x_start + i * 60, 140, image=image, anchor=tk.NW)
-            except Exception as e:
-                print(f"Erreur chargement image {path} : {e}")
 
         for widget in self.button_frame.winfo_children():
             widget.destroy()
 
         self.draw_table()
-        self.feedback_label.config(text="")
+        self.feedback_label.config(text="Quelle est la meilleure action?", fg=TEXT_COLOR)
 
         self.current_actions = list(self.current_data.get("labels", {}).keys())
 
-        for action in self.current_actions:
-            btn = tk.Button(self.button_frame, text=action.title(), width=15,
-                            command=lambda a=action: self.check_answer(a))
-            btn.pack(side=tk.LEFT, padx=5)
+        # Créer les boutons d'action
+        for i, action in enumerate(self.current_actions):
+            color = self.current_data.get("labels", {}).get(action, BUTTON_BG)
+            btn = tk.Button(
+                self.button_frame,
+                text=action.upper(),
+                width=18,
+                height=2,
+                command=lambda a=action: self.check_answer(a),
+                bg=color,
+                fg="black" if self._is_light_color(color) else "white",
+                font=("Arial", 11, "bold"),
+                cursor="hand2",
+                relief=tk.RAISED,
+                bd=3
+            )
+            btn.grid(row=i//3, column=i%3, padx=8, pady=5)
+
+    def _is_light_color(self, color):
+        """Détermine si une couleur est claire"""
+        try:
+            color = color.lstrip('#')
+            r, g, b = int(color[0:2], 16), int(color[2:4], 16), int(color[4:6], 16)
+            luminance = (0.299 * r + 0.587 * g + 0.114 * b)
+            return luminance > 128
+        except:
+            return False
 
     def check_answer(self, response):
+        """Vérifie la réponse du joueur"""
+        self.total_questions += 1
         current_answer = self.range_data.get(self.current_hand, [])
 
         correct = response.lower() in [a.lower() for a in current_answer]
 
         if correct:
             self.score += 1
-            self.feedback_label.config(text="Bravo ! Bonne réponse.", fg="green")
+            self.streak += 1
+            if self.streak > self.best_streak:
+                self.best_streak = self.streak
+            self.feedback_label.config(
+                text=f"✅ CORRECT! {response}",
+                fg="#2ECC71"
+            )
         else:
             self.errors += 1
-            self.feedback_label.config(text=f"Non ! L'optimale est : {', '.join(current_answer)}", fg="red")
+            self.streak = 0
+            correct_actions = ', '.join(current_answer)
+            self.feedback_label.config(
+                text=f"❌ INCORRECT! La bonne réponse: {correct_actions}",
+                fg="#E74C3C"
+            )
 
-        self.score_label.config(text=f"Score: {self.score} | Erreurs: {self.errors}")
+        self.update_score_display()
 
         if self.errors >= 3:
-            messagebox.showinfo("Réinitialisation", "Vous avez fait 3 erreurs. Le score est remis à zéro.")
+            messagebox.showwarning(
+                "Attention",
+                f"3 erreurs! Score réinitialisé.\n\nDernière série: {self.streak}",
+                parent=self.root
+            )
             self.score = 0
             self.errors = 0
-            self.score_label.config(text=f"Score: {self.score} | Erreurs: {self.errors}")
+            self.streak = 0
 
-        self.root.after(1000, self.generate_new_hand)
+        self.root.after(1500, self.generate_new_hand)
+
+    def update_score_display(self):
+        """Met à jour l'affichage des statistiques"""
+        accuracy = (self.score / self.total_questions * 100) if self.total_questions > 0 else 0
+        
+        self.score_label.config(
+            text=f"✓ Score: {self.score} | ✗ Erreurs: {self.errors}"
+        )
+        
+        streak_text = f"🔥 Série: {self.streak}"
+        if self.streak >= 5:
+            streak_text += " 🏆"
+        self.streak_label.config(text=streak_text)
+        
+        self.accuracy_label.config(
+            text=f"📈 Précision: {accuracy:.1f}% ({self.score}/{self.total_questions})"
+        )
+
+    def show_statistics(self):
+        """Affiche les statistiques détaillées"""
+        elapsed_time = int(time.time() - self.start_time)
+        minutes = elapsed_time // 60
+        seconds = elapsed_time % 60
+        
+        stats_text = f"""
+═══════════════════════════
+    STATISTIQUES DE SESSION
+═══════════════════════════
+
+✅ Bonnes réponses: {self.score}
+❌ Mauvaises réponses: {self.errors}
+📊 Total de questions: {self.total_questions}
+
+🎯 Précision: {(self.score/self.total_questions*100) if self.total_questions > 0 else 0:.1f}%
+
+🔥 Série actuelle: {self.streak}
+🏆 Meilleure série: {self.best_streak}
+
+⏱️ Temps écoulé: {minutes}m {seconds}s
+
+═══════════════════════════
+        """
+        
+        messagebox.showinfo("Statistiques", stats_text, parent=self.root)
+
+    def reset_stats(self):
+        """Réinitialise les statistiques"""
+        confirm = messagebox.askyesno(
+            "Confirmation",
+            "Réinitialiser toutes les statistiques?",
+            parent=self.root
+        )
+        if confirm:
+            self.score = 0
+            self.errors = 0
+            self.streak = 0
+            self.best_streak = 0
+            self.total_questions = 0
+            self.start_time = time.time()
+            self.question_times = []
+            self.update_score_display()
+            self.generate_new_hand()
 
     def load_range_for_position(self, position):
+        """Charge les données de range pour une position"""
         filename = self.range_files[position]
         path = os.path.join(os.getcwd(), filename)
-        with open(path, "r") as f:
-            data = json.load(f)
-        bb = self.extract_bb_from_filename(filename)
-        return data, position, bb
+        try:
+            with open(path, "r", encoding='utf-8') as f:
+                data = json.load(f)
+            bb = self.extract_bb_from_filename(filename)
+            return data, position, bb
+        except Exception as e:
+            print(f"Erreur lors du chargement de {filename}: {e}")
+            return {"labels": {}, "range_data": {}}, position, 40
 
     def extract_bb_from_filename(self, filename):
+        """Extrait le nombre de BB du nom de fichier"""
         match = re.search(r'(\d+)bb', filename.lower())
-        return int(match.group(1)) if match else 0
+        return int(match.group(1)) if match else 40
     
     def parse_hand_to_filenames(self, hand_str):
-        """
-        Transforme une string de main (ex : 'AhKs', '8s2d') en 2 noms de fichiers image ['Ah.png', 'Ks.png']
-        """
+        """Transforme une main en noms de fichiers d'images"""
         match = re.findall(r"[AKQJT\d][cdhs]", hand_str, re.IGNORECASE)
         if len(match) != 2:
-            print(f"Format de main invalide : {hand_str}")
-            return ["back.png", "back.png"]  # fallback si problème
+            return ["2c.png", "2d.png"]  # Fallback
         return [f"{match[0]}.png", f"{match[1]}.png"]
     
     def convert_range_hand_to_cards(self, range_hand):
-        """
-        Convertit une main style 'K3s' ou 'QJo' en deux cartes concrètes avec couleurs, ex : 'Kh3h' ou 'QsJd'
-        """
-        ranks = "AKQJT98765432"
+        """Convertit une main de range en cartes concrètes"""
         suits = ['c', 'd', 'h', 's']
         
-        if len(range_hand) == 2:
-            print(f"Pocket pair : {range_hand}")
+        if len(range_hand) == 2:  # Pocket pair
             suit1, suit2 = random.sample(suits, 2)
-            return range_hand[0]+ suit1 + range_hand[1]+ suit2
+            return range_hand[0] + suit1 + range_hand[1] + suit2
 
         if len(range_hand) != 3:
-            print(f"Format incorrect : {range_hand}")
-            return "AhKs"  # fallback
+            return "AhKs"  # Fallback
 
         r1, r2, suited_flag = range_hand[0], range_hand[1], range_hand[2]
 
         if suited_flag == 's':
             suit = random.choice(suits)
-            card1 = r1 + suit
-            card2 = r2 + suit
+            return r1 + suit + r2 + suit
         elif suited_flag == 'o':
-            suit1, suit2 = random.sample(suits, 2)  # deux couleurs différentes
-            card1 = r1 + suit1
-            card2 = r2 + suit2
+            suit1, suit2 = random.sample(suits, 2)
+            return r1 + suit1 + r2 + suit2
         else:
-            print(f"Symbole de suited inconnu : {range_hand}")
-            return "AhKs"  # fallback
-
-        return card1 + card2  # format ex: "Kh3h"
+            return "AhKs"  # Fallback
